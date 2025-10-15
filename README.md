@@ -1,231 +1,177 @@
 # 🧠 SmartShift-AI
 
 **SmartShift-AI** is an AI-powered **Shift-End Reporting and Meeting Summarization System** built with **Python, FastAPI, Whisper**, and **NLP**.  
-It automatically transcribes meeting recordings, generates structured summaries, and stores all reports for future access — making your workflow faster, smarter, and organized.
+It transcribes meeting recordings, generates structured summaries, and stores reports for later retrieval.
 
 ---
 
 ## 🚀 Features
 
-- 🎙 **Speech-to-Text (OpenAI Whisper)** — Accurately transcribes meeting audio into text.  
-- 🧾 **Automatic Report Generation** — NLP-based summarization of meeting discussions.  
-- 🕒 **Meeting Metadata** — Each report stores date, title, transcript, and summaries.  
-- 🗃 **Persistent Storage (SQLite)** — Saves meeting records for retrieval anytime.  
-- ⚙️ **REST API with FastAPI** — Easy-to-use, interactive endpoints.  
-- 📱 **Future Integration** — Flutter frontend for dashboards and shift-end summaries.
+- Speech-to-Text (OpenAI Whisper)  
+- NLP-based summarization (Hugging Face Transformers)  
+- Stores meeting metadata (title, date/time)  
+- Persistent storage with SQLite via SQLAlchemy  
+- REST API built with FastAPI  
+- Future: Flutter dashboard for viewing reports
 
 ---
 
 ## 🧱 Project Structure
 
 SmartShift-AI/
-│
-├── backend/
-│ ├── api/
-│ │ ├── models/
-│ │ │ └── schemas.py # Pydantic API models (request/response)
-│ │ ├── routes/
-│ │ │ └── transcription.py # All endpoints (transcribe, reports, summarize)
-│ │ └── crud.py # Database interaction functions
-│ │
-│ ├── database/
-│ │ ├── db.py # Database connection (SQLAlchemy + SQLite)
-│ │ └── models.py # SQLAlchemy models for DB tables
-│ │
-│ ├── utils/
-│ │ └── summarizer.py # NLP summarizer (Hugging Face - BART)
-│ │
-│ ├── main.py # FastAPI app entry point
-│ └── requirements.txt # Python dependencies
-│
-├── .gitignore # Ignore build, venv, cache files
-└── README.md # Project documentation (this file)
-
+|
+|-- backend/
+|   |-- api/
+|   |   |-- models/
+|   |   |   └── schemas.py              # Pydantic API models (request/response)
+|   |   |
+|   |   |-- routes/
+|   |   |   └── transcription.py        # All endpoints (transcribe, reports, summarize)
+|   |   |
+|   |   └── crud.py                     # Database interaction functions
+|   |
+|   |-- database/
+|   |   |-- db.py                       # Database connection (SQLAlchemy + SQLite)
+|   |   └── models.py                   # SQLAlchemy models for DB tables
+|   |
+|   |-- utils/
+|   |   └── summarizer.py               # NLP summarizer (Hugging Face - BART)
+|   |
+|   |-- main.py                         # FastAPI app entry point
+|   └── requirements.txt                # Python dependencies
+|
+|-- .gitignore                          # Ignore build, venv, cache files
+└── README.md                           # Project documentation (this file)
 
 ---
 
 ## 🧰 Tech Stack
 
-| Component | Technology |
-|------------|-------------|
-| **Backend** | FastAPI (Python) |
-| **Speech Recognition** | OpenAI Whisper |
-| **NLP Summarization** | Hugging Face Transformers (BART) |
-| **Database** | SQLite (via SQLAlchemy ORM) |
-| **Language** | Python 3.11 |
-| **Frontend (Planned)** | Flutter |
+- **Backend:** FastAPI (Python)  
+- **Speech Recognition:** OpenAI Whisper  
+- **NLP Summarization:** Hugging Face Transformers (facebook/bart-large-cnn)  
+- **Database:** SQLite (SQLAlchemy)  
+- **Language:** Python 3.11  
+- **Frontend (planned):** Flutter
 
 ---
 
-## ⚙️ Installation & Setup (Step-by-Step)
+## ⚙️ Installation & Setup (complete)
 
-> 🧑‍💻 Follow these steps carefully to set up your environment.
+Follow these exact steps. Commands are for **Windows PowerShell** unless noted.
 
-### 🪜 1. Clone the Repository
-```bash
-git clone https://github.com/Akhilesh-Ankur09/SmartShift-AI.git
-cd SmartShift-AI
+1) Clone repository
+    git clone https://github.com/Akhilesh-Ankur09/SmartShift-AI.git
+    cd SmartShift-AI
 
-🪜 2. Create and Activate Virtual Environment
-```bash
-python -m venv .venv
-.venv\Scripts\activate   # For Windows
-# OR
-source .venv/bin/activate  # For Linux/Mac
+2) Create & activate virtual environment (Windows PowerShell)
+    python -m venv .venv
+    .venv\Scripts\Activate.ps1
+    # If PowerShell prevents execution, run once (as Administrator or with permission):
+    # Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
-🪜 3. Install Dependencies
-```bash
-cd backend
-pip install -r requirements.txt
+   (For Command Prompt)
+    .venv\Scripts\activate.bat
 
-🪜 4. Run the FastAPI Server
-```bash
-uvicorn main:app --reload
+   (For macOS / Linux)
+    python3 -m venv .venv
+    source .venv/bin/activate
 
-✅ Server will start at:
-👉 http://127.0.0.1:8000
+3) Install backend dependencies
+    cd backend
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
 
-✅ Interactive API Docs:
-👉 http://127.0.0.1:8000/docs
+   If `torch` install fails, install CPU wheel first (example):
+    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+    pip install openai-whisper
 
-🪜 5. Verify Setup
-You should see logs like:
+4) Run the FastAPI server (development)
+    uvicorn main:app --reload
 
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://127.0.0.1:8000
+   Open the API docs:
+    http://127.0.0.1:8000/docs
 
+---
 
-Then, open /docs to test your endpoints.
+## 🔌 API Endpoints
 
-🧩 API Endpoints
-Endpoint	Method	Description
-/api/transcribe	POST	Upload an audio/video file, transcribe with Whisper, and save to DB
-/api/reports	GET	Retrieve all saved meeting reports
-/api/summarize/{meeting_id}	POST	Generate a summary for a specific meeting by ID
+- `POST /api/transcribe`  
+  Upload an audio (.wav/.mp4) file with optional form field `meeting_title`. Transcribes, saves transcript & metadata to DB, returns preview and `meeting_id`.
 
-🧠 Example Workflow
+- `GET /api/reports`  
+  Returns a list of saved meeting reports (id, title, date, etc).
 
-1️⃣ Upload a meeting recording
+- `POST /api/summarize/{meeting_id}`  
+  Generates (or regenerates) an NLP summary for a stored meeting and saves it in DB.
 
-POST /api/transcribe
+---
 
+## 💾 Database schema (MeetingReport table)
 
-Upload .wav or .mp4 file
+- `id` (Integer, PK)  
+- `meeting_title` (String)  
+- `meeting_date` (DateTime)  
+- `started_at` (DateTime)  
+- `ended_at` (DateTime, optional)  
+- `transcript_text` (Text)  
+- `final_summary` (Text, optional)  
+- `raw_transcript_path` (String, optional)
 
-(Optional) Add a meeting title
-✅ Returns transcript preview and saves it to the database.
+---
 
-2️⃣ List all reports
+## 🧪 Example usage (curl)
 
-GET /api/reports
+Upload and transcribe:
+    curl -X POST "http://127.0.0.1:8000/api/transcribe" \
+      -F "file=@/path/to/meeting.wav" \
+      -F "meeting_title=Daily Sync"
 
+List reports:
+    curl http://127.0.0.1:8000/api/reports
 
-Shows all saved meetings with title, date, and transcript IDs.
+Summarize a stored meeting:
+    curl -X POST http://127.0.0.1:8000/api/summarize/1
 
-3️⃣ Generate a summary
+---
 
-POST /api/summarize/{meeting_id}
+## 🧭 Development Commands
 
+- Start server (dev): `uvicorn main:app --reload`  
+- Run on all interfaces (prod-like): `uvicorn main:app --host 0.0.0.0 --port 8000`  
+- Freeze dependencies: `pip freeze > requirements.txt`
 
-Replace {meeting_id} with the ID from /api/reports
-✅ Returns and saves the NLP-generated summary.
+---
 
-🗂 Database Schema (MeetingReport Table)
-Column	Type	Description
-id	Integer (PK)	Unique report ID
-meeting_title	String	Meeting name/title
-meeting_date	DateTime	Date of meeting
-started_at	DateTime	Meeting start time
-ended_at	DateTime	Meeting end time
-transcript_text	Text	Full meeting transcript
-final_summary	Text	NLP-generated summary
-raw_transcript_path	String	Path to raw audio file (optional)
-🧱 Example JSON Responses
-📩 /api/transcribe
-{
-  "message": "Transcription saved successfully!",
-  "meeting_id": 1,
-  "meeting_title": "Daily Standup",
-  "meeting_date": "2025-10-12T12:32:15.321Z",
-  "transcript_preview": "Today the team discussed progress..."
-}
+## 📈 Roadmap
 
-📤 /api/reports
-[
-  {
-    "id": 1,
-    "meeting_title": "Daily Standup",
-    "meeting_date": "2025-10-12T12:32:15.321Z",
-    "final_summary": null
-  }
-]
+- [x] FastAPI + Whisper transcription  
+- [x] SQLite database persistence (SQLAlchemy)  
+- [x] NLP summarization (Hugging Face BART)  
+- [ ] Interval-based (periodic) summaries during long meetings  
+- [ ] Flutter frontend dashboard (view/export reports)  
+- [ ] Dockerfile + Deploy (Render / Railway / VPS)  
+- [ ] Authentication & permissions  
+- [ ] Export to PDF/email
 
-🧾 /api/summarize/1
-{
-  "meeting_id": 1,
-  "meeting_title": "Daily Standup",
-  "summary": "The team reviewed ongoing tasks, discussed blockers, and planned next steps."
-}
+---
 
-🧭 Development Commands
-Task	Command
-Start server	uvicorn main:app --reload
-Install deps	pip install -r requirements.txt
-Freeze deps	pip freeze > requirements.txt
-Run in prod (optional)	uvicorn main:app --host 0.0.0.0 --port 8080
-📈 Roadmap
+## 🧑‍💻 Author
 
- FastAPI + Whisper integration
+**Akhilesh Ankur**  
+MCA Graduate • AI & Automation Enthusiast  
+GitHub: https://github.com/Akhilesh-Ankur09  
+LinkedIn: https://www.linkedin.com/in/akhilesh-ankur-3354712aa
 
- SQLite database with SQLAlchemy ORM
+---
 
- NLP summarization (BART model)
+## 🪪 License
 
- Interval-based meeting summaries
+This project is available under the **MIT License**. See `LICENSE` file.
 
- Flutter dashboard integration
+---
 
- Docker & Render deployment
+## 🤝 Contributing
 
- User authentication system
+Contributions, issues and feature requests are welcome — please open issues or PRs on GitHub.
 
- Export reports to PDF/Email
-
-🧑‍💻 Author
-
-Akhilesh Ankur
-🎓 MCA Graduate | AI & Automation Enthusiast
-📍 India
-🔗 LinkedIn
-
-💻 GitHub
-
-🪪 License
-
-This project is licensed under the MIT License — see the LICENSE
- file for details.
-
-🤝 Contributing
-
-Contributions are welcome!
-Feel free to fork this repo, open issues, or create pull requests.
-
-1. Fork the project
-2. Create your feature branch (git checkout -b feature-name)
-3. Commit your changes (git commit -m "Add feature-name")
-4. Push to your branch (git push origin feature-name)
-5. Open a Pull Request 🚀
-
-🌟 Acknowledgements
-
-[OpenAI Whisper](https://github.com/openai/whisper)
- for robust speech recognition
-
-[Hugging Face Transformers](https://huggingface.co/transformers/)
- for text summarization
-
-[FastAPI](https://fastapi.tiangolo.com/)
- for modern Python APIs
-
-[SQLite](https://sqlite.org/)
- for easy local data storage
