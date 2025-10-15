@@ -16,6 +16,7 @@ It transcribes meeting recordings, generates structured summaries, and stores re
 
 ---
 
+```text
 ## 🧱 Project Structure
 
 SmartShift-AI/
@@ -26,7 +27,7 @@ SmartShift-AI/
 |   |   |   └── schemas.py              # Pydantic API models (request/response)
 |   |   |
 |   |   |-- routes/
-|   |   |   └── transcription.py        # All endpoints (transcribe, reports, summarize)
+|   |   |   └── transcription.py        # Endpoints: transcribe, reports, summarize
 |   |   |
 |   |   └── crud.py                     # Database interaction functions
 |   |
@@ -42,10 +43,11 @@ SmartShift-AI/
 |
 |-- .gitignore                          # Ignore build, venv, cache files
 └── README.md                           # Project documentation (this file)
-
+```
 ---
 
 ## 🧰 Tech Stack
+
 
 - **Backend:** FastAPI (Python)  
 - **Speech Recognition:** OpenAI Whisper  
