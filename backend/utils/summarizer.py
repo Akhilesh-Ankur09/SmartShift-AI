@@ -3,6 +3,7 @@ from transformers import pipeline
 # Initialize summarization pipeline (loads once)
 summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
+
 def summarize_text(text: str, max_length: int = 200) -> str:
     """
     Generate a concise summary of a transcript.
